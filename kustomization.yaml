@@ -1,0 +1,4 @@
+resources:
+    - storage-deployment.yaml
+    - wordpress-deployment.yaml
+    - autoscalling-deployment.yaml

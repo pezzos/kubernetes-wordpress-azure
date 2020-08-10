@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-azurefile
+  labels:
+    app: wordpress
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: azurefile
+  resources:
+    requests:
+      storage: 20Gi
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: my-azurefile
+provisioner: kubernetes.io/azure-file
+reclaimPolicy: Retain
+mountOptions:
+  - dir_mode=0777
+  - file_mode=0777
+  - uid=0
+  - gid=0
+  - mfsymlinks
+  - cache=strict
+parameters:
+  skuName: Standard_LRS
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: my-azurefile-pv
+  labels:
+    usage: my-azurefile-pv
+spec:
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: slow
+  azureFile:
+    secretName: azure-storage-account-we01kubsa-secret
+    shareName: kubernetes-dynamic-pvc-e0e2a615-b7ef-42d9-9658-982f4d7a061c
+    readOnly: false
